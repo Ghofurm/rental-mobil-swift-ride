@@ -102,7 +102,7 @@ require_once '../includes/admin_header.php';
         </select>
         <button type="submit" class="px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">Cari</button>
         <?php if ($search || $status): ?>
-            <a href="index.php" class="px-4 py-2.5 rounded-xl bg-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-600 transition-colors">Reset</a>
+            <a href="<?php echo BASE_URL; ?>admin/index.php" class="px-4 py-2.5 rounded-xl bg-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-600 transition-colors">Reset</a>
         <?php endif; ?>
     </form>
 

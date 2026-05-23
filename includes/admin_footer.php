@@ -7,7 +7,7 @@
 
         <script>
             // Auto-dismiss flash messages after 4 seconds
-            document.querySelectorAll('.animate-fade-in').forEach(el => {
+            document.querySelectorAll('.flash-message').forEach(el => {
                 setTimeout(() => {
                     el.style.transition = 'opacity 0.5s';
                     el.style.opacity = '0';

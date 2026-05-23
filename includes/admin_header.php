@@ -73,7 +73,7 @@ function admin_active($page, $current) {
     <aside class="sidebar w-64 shrink-0 min-h-screen flex flex-col fixed top-0 left-0 z-30 hidden md:flex">
         <!-- Logo -->
         <div class="h-16 flex items-center px-6 border-b border-slate-800/50">
-            <a href="../index.php" class="flex items-center space-x-2 font-display text-xl font-bold">
+            <a href="<?php echo BASE_URL; ?>index.php" class="flex items-center space-x-2 font-display text-xl font-bold">
                 <span class="bg-gradient-to-r from-brand-500 to-indigo-400 bg-clip-text text-transparent">Swift</span>
                 <span class="text-white">Ride</span>
             </a>
@@ -84,14 +84,14 @@ function admin_active($page, $current) {
         <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
             <p class="text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 mb-3">Menu Utama</p>
 
-            <a href="index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 <?php echo admin_active('index.php', $current_admin_page); ?>">
+            <a href="<?php echo BASE_URL; ?>admin/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 <?php echo admin_active('index.php', $current_admin_page); ?>">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 Dashboard
             </a>
 
-            <a href="cars/create.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 <?php echo admin_active('create.php', $current_admin_page); ?>">
+            <a href="<?php echo BASE_URL; ?>admin/cars/create.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 <?php echo admin_active('create.php', $current_admin_page); ?>">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -100,7 +100,7 @@ function admin_active($page, $current) {
 
             <div class="pt-6 mt-6 border-t border-slate-800/50">
                 <p class="text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 mb-3">Lainnya</p>
-                <a href="../index.php" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-2 border-transparent transition-all duration-200">
+                <a href="<?php echo BASE_URL; ?>index.php" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-2 border-transparent transition-all duration-200">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                     </svg>
@@ -120,7 +120,7 @@ function admin_active($page, $current) {
                     <p class="text-xs text-slate-500">Administrator</p>
                 </div>
             </div>
-            <form method="POST" action="../logout.php">
+            <form method="POST" action="<?php echo BASE_URL; ?>logout.php">
                 <?php echo csrf_field(); ?>
                 <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -147,13 +147,13 @@ function admin_active($page, $current) {
         <!-- Flash Messages -->
         <div class="px-6 pt-4">
         <?php if (!empty($_SESSION['flash_success'])): ?>
-            <div class="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 mb-4 animate-fade-in">
+            <div class="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm text-emerald-400 mb-4 animate-fade-in flash-message">
                 <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                 <?php echo htmlspecialchars($_SESSION['flash_success'], ENT_QUOTES, 'UTF-8'); unset($_SESSION['flash_success']); ?>
             </div>
         <?php endif; ?>
         <?php if (!empty($_SESSION['flash_error'])): ?>
-            <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 mb-4 animate-fade-in">
+            <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 mb-4 animate-fade-in flash-message">
                 <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
                 <?php echo htmlspecialchars($_SESSION['flash_error'], ENT_QUOTES, 'UTF-8'); unset($_SESSION['flash_error']); ?>
             </div>

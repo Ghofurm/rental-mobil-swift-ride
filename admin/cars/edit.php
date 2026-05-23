@@ -118,7 +118,7 @@ function sel(mixed $fieldVal, string $optionVal): string {
 <div class="max-w-3xl animate-fade-in">
     <!-- Breadcrumb -->
     <nav class="text-sm text-slate-500 mb-6 flex items-center gap-2">
-        <a href="../index.php" class="hover:text-slate-300 transition-colors">Dashboard</a>
+        <a href="<?php echo BASE_URL; ?>admin/index.php" class="hover:text-slate-300 transition-colors">Dashboard</a>
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         <span class="text-slate-300">Edit — <?php echo htmlspecialchars($car['brand'] . ' ' . $car['model'], ENT_QUOTES, 'UTF-8'); ?></span>
     </nav>
@@ -237,7 +237,7 @@ function sel(mixed $fieldVal, string $optionVal): string {
                 <button type="submit" id="btn-submit-edit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-500 text-white text-sm font-semibold hover:from-indigo-500 hover:to-brand-600 transition-all shadow-lg shadow-indigo-500/20">
                     Simpan Perubahan
                 </button>
-                <a href="../index.php" class="px-6 py-3 rounded-xl bg-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-600 transition-colors">
+                <a href="<?php echo BASE_URL; ?>admin/index.php" class="px-6 py-3 rounded-xl bg-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-600 transition-colors">
                     Batal
                 </a>
             </div>
