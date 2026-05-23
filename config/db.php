@@ -39,6 +39,9 @@ $pdoOptions = [
 
 // ─── Step 1: Koneksi tanpa nama database, lalu buat jika belum ada ─────────
 try {
+    if (!extension_loaded('pdo_mysql')) {
+        throw new PDOException("Extension 'pdo_mysql' tidak ditemukan di server Anda. Silakan aktifkan di php.ini.");
+    }
     $pdo = new PDO("mysql:host={$host};charset=utf8mb4", $username, $password, $pdoOptions);
     // Buat database jika belum ada
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbname}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");

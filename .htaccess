@@ -8,16 +8,27 @@
 
 # Prevent direct access to sensitive files
 <FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
-# Protect config and includes directories
-<DirectoryMatch "^/(config|includes)/">
-    Order allow,deny
-    Deny from all
-</DirectoryMatch>
+# Protect config and includes directories using RewriteRule (safer for .htaccess)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(config|includes)/ - [F,L]
+</IfModule>
 
-# PHP settings
-php_flag display_errors Off
-php_flag log_errors On
+# PHP settings (wrapped in IfModule to prevent 500 if not running as module)
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
