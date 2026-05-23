@@ -1,3 +1,10 @@
+<?php
+// Mulai sesi untuk mengecek status login admin pada navbar publik
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../includes/csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -101,11 +108,24 @@
             
             <!-- Desktop Call to Action -->
             <div class="hidden md:flex items-center space-x-4">
+                <?php if (!empty($_SESSION['admin_id'])): ?>
+                <!-- Admin sudah login: tampilkan link Dashboard & tombol Logout -->
+                <a href="admin/index.php" class="text-sm font-medium text-brand-500 hover:text-indigo-400 transition-colors flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Dashboard
+                </a>
+                <form method="POST" action="logout.php" class="inline">
+                    <?php echo csrf_field(); ?>
+                    <button type="submit" class="text-sm font-medium text-slate-400 hover:text-red-400 transition-colors">Keluar</button>
+                </form>
+                <?php else: ?>
+                <a href="login.php" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Admin</a>
                 <a href="cars.php" data-link class="relative group px-5 py-2.5 rounded-full overflow-hidden transition-all duration-300">
                     <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-indigo-500"></span>
                     <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-500 to-brand-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span class="relative text-sm font-semibold text-white tracking-wide">Pesan Sekarang</span>
                 </a>
+                <?php endif; ?>
             </div>
             
             <!-- Mobile Menu Trigger Button -->
