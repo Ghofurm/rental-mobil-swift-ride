@@ -1,3 +1,5 @@
+</main>
+
 <!-- Footer Section -->
     <footer class="mt-auto border-t border-slate-900 bg-brand-dark/95 py-12">
         <div class="max-w-7xl mx-auto px-6">
@@ -17,10 +19,10 @@
                 <div>
                     <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Navigasi</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="#home" class="hover:text-brand-500 transition-colors">Home</a></li>
-                        <li><a href="#fleet" class="hover:text-brand-500 transition-colors">Armada Kami</a></li>
-                        <li><a href="#features" class="hover:text-brand-500 transition-colors">Keunggulan</a></li>
-                        <li><a href="#contact" class="hover:text-brand-500 transition-colors">Hubungi Kami</a></li>
+                        <li><a href="index.php" data-link class="hover:text-brand-500 transition-colors">Home</a></li>
+                        <li><a href="cars.php" data-link class="hover:text-brand-500 transition-colors">Armada Kami</a></li>
+                        <li><a href="about.php" data-link class="hover:text-brand-500 transition-colors">Tentang Kami</a></li>
+                        <li><a href="contact.php" data-link class="hover:text-brand-500 transition-colors">Hubungi Kami</a></li>
                     </ul>
                 </div>
                 
