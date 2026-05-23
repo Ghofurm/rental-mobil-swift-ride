@@ -14,7 +14,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     try {
         require_once __DIR__ . '/config/db.php';
         if (isset($pdo)) {
-            $stmt = $pdo->query("SELECT * FROM cars WHERE status = 'available' ORDER BY daily_rate DESC");
+            $stmt = $pdo->query("SELECT * FROM cars WHERE status = 'available' ORDER BY daily_rate DESC LIMIT 3");
             $cars = $stmt->fetchAll();
             $db_connected = true;
         }
@@ -88,6 +88,9 @@ if (!$db_connected || empty($cars)) {
         ]
     ];
 }
+
+// Batasi hanya 3 mobil untuk Landing Page
+$cars = array_slice($cars, 0, 3);
 
 // Sertakan layout Header
 require_once __DIR__ . '/includes/header.php';
@@ -289,6 +292,14 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                 </div>
             <?php endforeach; ?>
+        </div>
+        
+        <!-- View All Button -->
+        <div class="mt-16 text-center">
+            <a href="cars.php" data-link class="inline-flex items-center space-x-2 px-8 py-4 rounded-full bg-gradient-to-r from-brand-600 to-indigo-500 hover:shadow-lg hover:shadow-brand-600/20 font-semibold text-white tracking-wide transition-all duration-300">
+                <span>Lihat Semua Armada</span>
+                <span class="ml-1">➔</span>
+            </a>
         </div>
     </div>
 </section>

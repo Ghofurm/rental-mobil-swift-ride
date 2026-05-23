@@ -86,16 +86,22 @@
             </a>
             
             <!-- Desktop Navbar Menu -->
+            <?php
+            $current_page = basename($_SERVER['PHP_SELF']);
+            function active_class($page, $current) {
+                return $page === $current ? 'text-brand-500 font-semibold' : 'text-slate-300 hover:text-white';
+            }
+            ?>
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="#home" class="text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">Home</a>
-                <a href="#fleet" class="text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">Armada</a>
-                <a href="#features" class="text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">Keunggulan</a>
-                <a href="#contact" class="text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">Hubungi Kami</a>
+                <a href="index.php" class="text-sm font-medium <?php echo active_class('index.php', $current_page); ?> transition-colors duration-200" data-link>Home</a>
+                <a href="cars.php" class="text-sm font-medium <?php echo active_class('cars.php', $current_page); ?> transition-colors duration-200" data-link>Armada</a>
+                <a href="about.php" class="text-sm font-medium <?php echo active_class('about.php', $current_page); ?> transition-colors duration-200" data-link>Tentang Kami</a>
+                <a href="contact.php" class="text-sm font-medium <?php echo active_class('contact.php', $current_page); ?> transition-colors duration-200" data-link>Hubungi Kami</a>
             </nav>
             
             <!-- Desktop Call to Action -->
             <div class="hidden md:flex items-center space-x-4">
-                <a href="#fleet" class="relative group px-5 py-2.5 rounded-full overflow-hidden transition-all duration-300">
+                <a href="cars.php" data-link class="relative group px-5 py-2.5 rounded-full overflow-hidden transition-all duration-300">
                     <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-indigo-500"></span>
                     <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-500 to-brand-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span class="relative text-sm font-semibold text-white tracking-wide">Pesan Sekarang</span>
@@ -113,11 +119,15 @@
         <!-- Mobile Slide-out/Drop-down Navigation -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800/80 bg-brand-dark/95 backdrop-blur-lg">
             <div class="px-6 py-5 space-y-4 flex flex-col">
-                <a href="#home" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-white transition-colors py-2">Home</a>
-                <a href="#fleet" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-white transition-colors py-2">Armada</a>
-                <a href="#features" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-white transition-colors py-2">Keunggulan</a>
-                <a href="#contact" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-white transition-colors py-2">Hubungi Kami</a>
-                <a href="#fleet" class="mobile-nav-link text-center w-full px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-500 font-semibold text-white tracking-wide mt-4 block">Pesan Sekarang</a>
+                <a href="index.php" class="mobile-nav-link text-lg font-medium <?php echo active_class('index.php', $current_page); ?> transition-colors py-2" data-link>Home</a>
+                <a href="cars.php" class="mobile-nav-link text-lg font-medium <?php echo active_class('cars.php', $current_page); ?> transition-colors py-2" data-link>Armada</a>
+                <a href="about.php" class="mobile-nav-link text-lg font-medium <?php echo active_class('about.php', $current_page); ?> transition-colors py-2" data-link>Tentang Kami</a>
+                <a href="contact.php" class="mobile-nav-link text-lg font-medium <?php echo active_class('contact.php', $current_page); ?> transition-colors py-2" data-link>Hubungi Kami</a>
+                <a href="cars.php" data-link class="mobile-nav-link text-center w-full px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-500 font-semibold text-white tracking-wide mt-4 block">Pesan Sekarang</a>
             </div>
         </div>
     </header>
+
+    <!-- Content Wrapper for transitions -->
+    <main id="page-content" class="flex-grow transition-opacity duration-300">
+
