@@ -1,0 +1,23 @@
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Prevent direct access to sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect config and includes directories
+<DirectoryMatch "^/(config|includes)/">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
+
+# PHP settings
+php_flag display_errors Off
+php_flag log_errors On
