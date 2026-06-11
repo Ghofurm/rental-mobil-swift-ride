@@ -126,27 +126,27 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
         
-        <!-- Hero Graphic (Premium Minimalist UI Render mockup) -->
+        <!-- Hero Graphic (Premium Minimalist UI Render mockup - Dynamic & Rotating) -->
         <div class="lg:col-span-5 relative flex justify-center">
             <div class="w-full max-w-md p-1 bg-gradient-to-tr from-brand-500/20 to-transparent rounded-3xl backdrop-blur-3xl">
-                <div class="bg-brand-card/90 rounded-[22px] p-6 border border-slate-800/50 space-y-6">
+                <div id="promo-card-inner" class="bg-brand-card/90 rounded-[22px] p-6 border border-slate-800/50 space-y-6 transition-opacity duration-300">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Mobil Terpopuler</span>
-                        <span class="px-2 py-0.5 rounded bg-brand-500/10 text-[10px] text-brand-500 font-bold uppercase">Tesla Model Y</span>
+                        <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Mobil Pilihan</span>
+                        <span id="promo-brand" class="px-2 py-0.5 rounded bg-brand-500/10 text-[10px] text-brand-500 font-bold uppercase">-</span>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&q=80&w=800" alt="Tesla Model Y Promo" class="w-full h-48 object-cover rounded-xl shadow-lg border border-slate-800/40">
+                    <img id="promo-img" src="" alt="Promo Mobil" class="w-full h-48 object-cover rounded-xl shadow-lg border border-slate-800/40">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h3 class="font-display font-bold text-white">Tesla Model Y</h3>
-                            <p class="text-xs text-slate-400">Paling Hemat • Full Electric</p>
+                            <h3 id="promo-name" class="font-display font-bold text-white">-</h3>
+                            <p id="promo-type-fuel" class="text-xs text-slate-400">-</p>
                         </div>
                         <div class="text-right">
-                            <span class="block text-sm font-bold text-brand-500">Rp 2,2jt</span>
+                            <span id="promo-rate" class="block text-sm font-bold text-brand-500">-</span>
                             <span class="text-[10px] text-slate-500">per hari</span>
                         </div>
                     </div>
-                    <a href="#fleet" class="block w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 font-semibold text-white text-center text-sm transition-colors">
-                        Sewa Model Ini
+                    <a id="promo-btn" href="#" target="_blank" rel="noopener noreferrer" class="block w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 font-semibold text-white text-center text-sm transition-colors">
+                        Sewa Mobil Ini
                     </a>
                 </div>
             </div>
@@ -285,7 +285,7 @@ require_once __DIR__ . '/includes/header.php';
                                 </span>
                                 <span class="text-[10px] text-slate-500">tarif per hari</span>
                             </div>
-                            <a href="#" class="px-5 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-brand-200 hover:bg-brand-600 hover:text-white hover:border-transparent transition-all duration-300">
+                            <a href="https://wa.me/6281234567890?text=Halo%20Swift%20Ride,%20saya%20ingin%20menyewa%20mobil%20<?php echo urlencode($car['brand'] . ' ' . $car['model']); ?>" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-brand-200 hover:bg-brand-600 hover:text-white hover:border-transparent transition-all duration-300">
                                 Sewa Mobil
                             </a>
                         </div>
@@ -325,6 +325,78 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Ambil data mobil dari PHP yang dikonversi ke JSON
+    const cars = <?php echo json_encode(array_values($cars)); ?>;
+    if (!cars || cars.length === 0) return;
+
+    let currentIndex = 0;
+
+    const promoBrand = document.getElementById('promo-brand');
+    const promoImg = document.getElementById('promo-img');
+    const promoName = document.getElementById('promo-name');
+    const promoTypeFuel = document.getElementById('promo-type-fuel');
+    const promoRate = document.getElementById('promo-rate');
+    const promoBtn = document.getElementById('promo-btn');
+    const cardInner = document.getElementById('promo-card-inner');
+
+    function updatePromoCard(index) {
+        const car = cars[index];
+        if (!car) return;
+
+        // Berikan efek transisi memudar (fade out)
+        if (cardInner) {
+            cardInner.style.opacity = '0';
+        }
+
+        setTimeout(() => {
+            if (promoBrand) promoBrand.textContent = car.brand;
+            if (promoImg) {
+                promoImg.src = car.image;
+                promoImg.alt = `${car.brand} ${car.model} Promo`;
+            }
+            if (promoName) promoName.textContent = `${car.brand} ${car.model}`;
+            
+            if (promoTypeFuel) {
+                const fuelType = car.fuel ? car.fuel : 'Petrol';
+                const carType = car.type ? car.type : 'Passenger';
+                promoTypeFuel.textContent = `Pilihan Utama • ${carType} (${fuelType})`;
+            }
+            
+            if (promoRate) {
+                const rateVal = parseFloat(car.daily_rate);
+                if (rateVal >= 1000000) {
+                    promoRate.textContent = `Rp ${(rateVal / 1000000).toFixed(1).replace('.', ',')}jt`;
+                } else {
+                    promoRate.textContent = `Rp ${new Intl.NumberFormat('id-ID').format(rateVal)}`;
+                }
+            }
+            
+            if (promoBtn) {
+                promoBtn.href = `https://wa.me/6281234567890?text=${encodeURIComponent('Halo Swift Ride, saya ingin menyewa mobil ' + car.brand + ' ' + car.model)}`;
+            }
+
+            // Kembalikan opacity ke 1 (fade in)
+            if (cardInner) {
+                cardInner.style.opacity = '1';
+            }
+        }, 300);
+    }
+
+    // Inisialisasi card pertama kali
+    updatePromoCard(0);
+
+    // Jalankan bergulir/rotasi otomatis setiap 4 detik jika ada lebih dari 1 mobil
+    if (cars.length > 1) {
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % cars.length;
+            updatePromoCard(currentIndex);
+        }, 4000);
+    }
+});
+</script>
 
 <?php
 // Sertakan layout Footer

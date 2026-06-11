@@ -76,6 +76,8 @@ function handleHeaderScroll() {
 /**
  * AJAX Page Router (Seamless Navigation)
  */
+let lastLoadedUrl = window.location.pathname + window.location.search;
+
 function initPageRouter() {
     const pageContent = document.getElementById('page-content');
     if (!pageContent) return;
@@ -103,7 +105,11 @@ function handleLinkClick(e) {
 }
 
 function handlePopState() {
-    loadPage(window.location.pathname + window.location.search, false);
+    const currentPathSearch = window.location.pathname + window.location.search;
+    if (currentPathSearch === lastLoadedUrl) {
+        return; // Hanya hash yang berubah, biarkan perilaku bawaan browser
+    }
+    loadPage(currentPathSearch, false);
 }
 
 /**
@@ -142,6 +148,10 @@ async function loadPage(url, pushState = true) {
             if (pushState) {
                 history.pushState(null, null, url);
             }
+
+            // Update URL yang terakhir berhasil dimuat
+            const parsedUrl = new URL(url, window.location.origin);
+            lastLoadedUrl = parsedUrl.pathname + parsedUrl.search;
 
             // 4. Perbarui status Menu Aktif (Active State)
             updateActiveNavMenu(url);
