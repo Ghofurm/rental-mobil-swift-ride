@@ -58,6 +58,10 @@ function admin_active($page, $current) {
             border: 1px solid rgba(255,255,255,0.1);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        .input-field option {
+            background-color: #131926;
+            color: #ffffff;
+        }
         .input-field:focus {
             outline: none;
             border-color: #6366f1;
