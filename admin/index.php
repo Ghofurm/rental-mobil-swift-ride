@@ -144,9 +144,14 @@ require_once '../includes/admin_header.php';
                     <td class="px-5 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-9 rounded-lg overflow-hidden bg-slate-800 shrink-0">
-                                <?php if ($car['image']): ?>
+                                <?php if ($car['image']): 
+                                    $imgUrl = $car['image'];
+                                    if (!filter_var($imgUrl, FILTER_VALIDATE_URL)) {
+                                        $imgUrl = BASE_URL . $imgUrl;
+                                    }
+                                ?>
                                 <img
-                                    src="<?php echo htmlspecialchars($car['image'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    src="<?php echo htmlspecialchars($imgUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                     alt="<?php echo htmlspecialchars($car['brand'] . ' ' . $car['model'], ENT_QUOTES, 'UTF-8'); ?>"
                                     class="w-full h-full object-cover"
                                     loading="lazy"

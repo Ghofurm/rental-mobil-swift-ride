@@ -23,12 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $model        = trim($_POST['model']        ?? '');
     $type         = trim($_POST['type']         ?? '');
     $daily_rate   = trim($_POST['daily_rate']   ?? '');
-    $image        = trim($_POST['image']        ?? '');
     $status       = trim($_POST['status']       ?? 'available');
     $transmission = trim($_POST['transmission'] ?? 'Automatic');
     $fuel         = trim($_POST['fuel']         ?? 'Petrol');
     $seats        = trim($_POST['seats']        ?? '5');
     $description  = trim($_POST['description']  ?? '');
+    $image        = '';
 
     // Validasi
     if (!$brand || mb_strlen($brand) > 50)
@@ -39,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['type'] = 'Tipe wajib diisi (maks. 30 karakter).';
     if (!is_numeric($daily_rate) || (float)$daily_rate <= 0)
         $errors['daily_rate'] = 'Tarif harian harus berupa angka positif.';
-    if ($image && !filter_var($image, FILTER_VALIDATE_URL))
-        $errors['image'] = 'URL gambar tidak valid.';
     if (!in_array($status, ['available', 'rented', 'maintenance'], true))
         $errors['status'] = 'Status tidak valid.';
     if (!in_array($transmission, ['Automatic', 'Manual'], true))
@@ -49,6 +47,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['fuel'] = 'Bahan bakar tidak valid.';
     if (!ctype_digit($seats) || (int)$seats < 1 || (int)$seats > 20)
         $errors['seats'] = 'Jumlah kursi harus antara 1–20.';
+
+    // Proses upload gambar
+    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['image']['tmp_name'];
+            $fileName = $_FILES['image']['name'];
+            $fileSize = $_FILES['image']['size'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                $errors['image'] = 'Format gambar tidak valid. Hanya JPG, PNG, dan WEBP yang diperbolehkan.';
+            }
+
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (empty($errors['image']) && function_exists('mime_content_type')) {
+                $mimeType = mime_content_type($fileTmpPath);
+                if (!in_array($mimeType, $allowedMimeTypes)) {
+                    $errors['image'] = 'Format file tidak valid.';
+                }
+            }
+
+            if ($fileSize > 2 * 1024 * 1024) {
+                $errors['image'] = 'Ukuran gambar tidak boleh lebih dari 2MB.';
+            }
+
+            if (empty($errors['image'])) {
+                $newFileName = uniqid('car_', true) . '.' . $fileExtension;
+                $uploadFileDir = '../../uploads/';
+                $dest_path = $uploadFileDir . $newFileName;
+
+                if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                    $image = 'uploads/' . $newFileName;
+                } else {
+                    $errors['image'] = 'Gagal menyimpan gambar di server.';
+                }
+            }
+        } else {
+            $errors['image'] = 'Gagal mengunggah gambar.';
+        }
+    } else {
+        $errors['image'] = 'Gambar mobil wajib diunggah.';
+    }
 
     if (empty($errors)) {
         $stmt = $pdo->prepare("
@@ -97,7 +138,7 @@ function old(array $old, string $key, string $default = ''): string {
     <div class="bg-[#131926] rounded-2xl border border-slate-800/50 p-6 lg:p-8">
         <h2 class="text-lg font-semibold text-white mb-6">Informasi Kendaraan Baru</h2>
 
-        <form method="POST" action="create.php" novalidate>
+        <form method="POST" action="create.php" enctype="multipart/form-data" novalidate>
             <?php echo csrf_field(); ?>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -176,14 +217,13 @@ function old(array $old, string $key, string $default = ''): string {
                     </select>
                 </div>
 
-                <!-- URL Gambar (full width) -->
+                <!-- Upload Gambar (full width) -->
                 <div class="md:col-span-2">
-                    <label for="car-image" class="block text-sm font-medium text-slate-300 mb-1.5">URL Gambar</label>
-                    <input type="url" id="car-image" name="image" maxlength="512"
-                           class="<?php echo inputClass($errors, 'image'); ?>"
-                           placeholder="https://..." value="<?php echo old($old, 'image'); ?>">
+                    <label for="car-image" class="block text-sm font-medium text-slate-300 mb-1.5">Gambar Mobil <span class="text-red-400">*</span></label>
+                    <input type="file" id="car-image" name="image" accept="image/*" required
+                           class="<?php echo inputClass($errors, 'image'); ?>">
                     <?php echo fieldError($errors, 'image'); ?>
-                    <p class="mt-1.5 text-xs text-slate-600">Kosongkan jika tidak ada gambar. Gunakan URL gambar publik (misalnya dari Unsplash).</p>
+                    <p class="mt-1.5 text-xs text-slate-600">Format gambar yang didukung: JPG, PNG, WEBP. Maksimal ukuran file: 2MB.</p>
                 </div>
 
                 <!-- Deskripsi (full width) -->
