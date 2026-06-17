@@ -1,2 +1,6 @@
 # Exclude local environment files
 .env
+
+# Ignore uploaded assets except gitkeep
+uploads/*
+!uploads/.gitkeep

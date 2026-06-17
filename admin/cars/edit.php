@@ -41,18 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Permintaan tidak valid.');
     }
 
-    $old = $_POST;
-
     $brand        = trim($_POST['brand']        ?? '');
     $model        = trim($_POST['model']        ?? '');
     $type         = trim($_POST['type']         ?? '');
     $daily_rate   = trim($_POST['daily_rate']   ?? '');
-    $image        = trim($_POST['image']        ?? '');
     $status       = trim($_POST['status']       ?? 'available');
     $transmission = trim($_POST['transmission'] ?? 'Automatic');
     $fuel         = trim($_POST['fuel']         ?? 'Petrol');
     $seats        = trim($_POST['seats']        ?? '5');
     $description  = trim($_POST['description']  ?? '');
+    $image        = $car['image']; // Default simpan gambar lama
 
     // Validasi
     if (!$brand || mb_strlen($brand) > 50)
@@ -63,8 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['type'] = 'Tipe wajib diisi (maks. 30 karakter).';
     if (!is_numeric($daily_rate) || (float)$daily_rate <= 0)
         $errors['daily_rate'] = 'Tarif harian harus berupa angka positif.';
-    if ($image && !filter_var($image, FILTER_VALIDATE_URL))
-        $errors['image'] = 'URL gambar tidak valid.';
     if (!in_array($status, ['available', 'rented', 'maintenance'], true))
         $errors['status'] = 'Status tidak valid.';
     if (!in_array($transmission, ['Automatic', 'Manual'], true))
@@ -73,6 +69,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['fuel'] = 'Bahan bakar tidak valid.';
     if (!ctype_digit($seats) || (int)$seats < 1 || (int)$seats > 20)
         $errors['seats'] = 'Jumlah kursi harus antara 1–20.';
+
+    // Proses upload gambar jika ada
+    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['image']['tmp_name'];
+            $fileName = $_FILES['image']['name'];
+            $fileSize = $_FILES['image']['size'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                $errors['image'] = 'Format gambar tidak valid. Hanya JPG, PNG, dan WEBP yang diperbolehkan.';
+            }
+
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (empty($errors['image']) && function_exists('mime_content_type')) {
+                $mimeType = mime_content_type($fileTmpPath);
+                if (!in_array($mimeType, $allowedMimeTypes)) {
+                    $errors['image'] = 'Format file tidak valid.';
+                }
+            }
+
+            if ($fileSize > 2 * 1024 * 1024) {
+                $errors['image'] = 'Ukuran gambar tidak boleh lebih dari 2MB.';
+            }
+
+            if (empty($errors['image'])) {
+                $newFileName = uniqid('car_', true) . '.' . $fileExtension;
+                $uploadFileDir = '../../uploads/';
+                $dest_path = $uploadFileDir . $newFileName;
+
+                if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                    $image = 'uploads/' . $newFileName;
+                    
+                    // Hapus gambar lama jika ada dan merupakan file lokal
+                    if (!empty($car['image']) && !filter_var($car['image'], FILTER_VALIDATE_URL)) {
+                        $oldImagePath = '../../' . $car['image'];
+                        if (file_exists($oldImagePath)) {
+                            @unlink($oldImagePath);
+                        }
+                    }
+                } else {
+                    $errors['image'] = 'Gagal menyimpan gambar baru di server.';
+                }
+            }
+        } else {
+            $errors['image'] = 'Gagal mengunggah gambar.';
+        }
+    }
 
     if (empty($errors)) {
         $stmt = $pdo->prepare("
@@ -126,7 +171,7 @@ function sel(mixed $fieldVal, string $optionVal): string {
     <div class="bg-[#131926] rounded-2xl border border-slate-800/50 p-6 lg:p-8">
         <h2 class="text-lg font-semibold text-white mb-6">Edit Informasi Kendaraan</h2>
 
-        <form method="POST" action="edit.php?id=<?php echo (int)$id; ?>" novalidate>
+        <form method="POST" action="edit.php?id=<?php echo (int)$id; ?>" enctype="multipart/form-data" novalidate>
             <?php echo csrf_field(); ?>
             <input type="hidden" name="id" value="<?php echo (int)$id; ?>">
 
@@ -206,21 +251,26 @@ function sel(mixed $fieldVal, string $optionVal): string {
                     </select>
                 </div>
 
-                <!-- URL Gambar -->
+                <!-- Upload Gambar -->
                 <div class="md:col-span-2">
-                    <label for="car-image" class="block text-sm font-medium text-slate-300 mb-1.5">URL Gambar</label>
-                    <input type="url" id="car-image" name="image" maxlength="512"
-                           class="<?php echo inputClass($errors, 'image'); ?>"
-                           value="<?php echo htmlspecialchars($car['image'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <label for="car-image" class="block text-sm font-medium text-slate-300 mb-1.5">Gambar Mobil (Kosongkan jika tidak diubah)</label>
+                    <input type="file" id="car-image" name="image" accept="image/*"
+                           class="<?php echo inputClass($errors, 'image'); ?>">
                     <?php echo fieldError($errors, 'image'); ?>
                     <!-- Preview gambar saat ini -->
-                    <?php if (!empty($car['image'])): ?>
+                    <?php if (!empty($car['image'])): 
+                        $imgUrl = $car['image'];
+                        if (!filter_var($imgUrl, FILTER_VALIDATE_URL)) {
+                            $imgUrl = BASE_URL . $imgUrl;
+                        }
+                    ?>
                     <div class="mt-3 w-32 h-20 rounded-xl overflow-hidden bg-slate-800">
-                        <img src="<?php echo htmlspecialchars($car['image'], ENT_QUOTES, 'UTF-8'); ?>"
+                        <img src="<?php echo htmlspecialchars($imgUrl, ENT_QUOTES, 'UTF-8'); ?>"
                              alt="Preview" class="w-full h-full object-cover" loading="lazy"
                              onerror="this.parentElement.style.display='none'">
                     </div>
                     <?php endif; ?>
+                    <p class="mt-1.5 text-xs text-slate-600">Format gambar yang didukung: JPG, PNG, WEBP. Maksimal ukuran file: 2MB.</p>
                 </div>
 
                 <!-- Deskripsi -->
