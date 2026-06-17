@@ -7,6 +7,13 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
     exit("Akses ditolak.");
 }
 
+// Fallback untuk mb_strlen jika extension mbstring tidak diaktifkan
+if (!function_exists('mb_strlen')) {
+    function mb_strlen($string, $encoding = null) {
+        return strlen($string);
+    }
+}
+
 // ─── Loader .env Sederhana ─────────────────────────────────────────────────
 $envPath = dirname(__DIR__) . '/.env';
 if (file_exists($envPath)) {
